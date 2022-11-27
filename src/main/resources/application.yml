@@ -1,0 +1,58 @@
+quarkus:
+  rest-client:
+    search-api:
+      url: http://localhost:9200
+      scope: javax.inject.Singleton
+    cart:
+      url: http://localhost:8080
+      scope: javax.inject.Singleton
+    item:
+      url: http://localhost:8080
+      scope: javax.inject.Singleton
+    payment:
+      url: http://localhost:8080
+      scope: javax.inject.Singleton
+  datasource:
+    jdbc: false
+    db-kind: mysql
+    username: prarabdh
+    password: newpass
+    reactive:
+      url: mysql://localhost:3306/bittoo_items
+      max-size: 20
+    cart:
+      jdbc: false
+      db-kind: mysql
+      username: prarabdh
+      password: newpass
+      reactive:
+        url: mysql://localhost:3306/bittoo_items
+        max-size: 20
+    checkout:
+      jdbc: false
+      db-kind: mysql
+      username: prarabdh
+      password: newpass
+      reactive:
+        url: mysql://localhost:3306/bittoo_items
+        max-size: 20
+    hibernate-orm:
+      "checkout":
+        datasource: checkout
+      "cart":
+        datasource: cart
+  log:
+    console:
+      format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+      level: DEBUG
+    category:
+      "io.quarkus":
+        level: DEBUG
+
+stripe:
+  public-key: pk_test_TYooMQauvdEDq54NiTphI7jx
+  secret-key: sk_test_4eC39HqLyjWDarjtT1zdp7dc
+
+
+
+
