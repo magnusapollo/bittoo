@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CartResourceTest {
 
@@ -20,7 +23,9 @@ public class CartResourceTest {
         CartItem c3 = cartItem("id3", 3,"item2");
         List<CartItem> toMerge = Arrays.asList(c1, c2, c3);
         List<CartItem> merged = cartResource.mergeItems(toMerge);
-        assertEquals(8, merged.get(0).getQuantity());
+        Optional<CartItem> item1 = merged.stream().filter(cartItem -> cartItem.getItemId().equals("item1")).findAny();
+        assertTrue(item1.isPresent());
+        assertEquals(8, item1.get().getQuantity());
     }
 
     private CartItem cartItem(String cartItemId, int quantity, String itemId) {

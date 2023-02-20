@@ -1,32 +1,42 @@
-package com.bittoo.checkout.db.entity;
+package com.bittoo.customer.db.entity;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "checkout")
-@Table(name = "checkout")
-@Data
 @EqualsAndHashCode(callSuper = true)
-public class CheckoutEntity extends PanacheEntityBase {
-
+@Entity(name = "customer")
+@Table(name = "customer")
+@Data
+public class CustomerEntity extends PanacheEntityBase {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   private UUID id;
 
-  @Column(name = "cart_id")
-  private UUID cartId;
+  @Column(name = "full_name")
+  private String fullName;
 
-  @Embedded private CheckoutAddressEntity shipping;
+  @Column(name = "email")
+  private String email;
+
+  @OneToMany(
+      mappedBy = "customer",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER)
+  private List<AddressEntity> addresses;
 }

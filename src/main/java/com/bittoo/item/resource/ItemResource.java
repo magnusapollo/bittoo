@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -23,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.UUID;
-import java.util.concurrent.CompletionStage;
 
 @Slf4j
 @Path("/v1/items")
@@ -53,8 +51,7 @@ public class ItemResource {
   public Multi<Item> getItems(@QueryParam("limit") Long limit) {
     Uni<RowSet<Row>> rowSetUni =
         mySQLPool
-            .preparedQuery(
-                "Select BIN_TO_UUID(id) as id, title, description, price from Item LIMIT ?")
+            .preparedQuery("Select BIN_TO_UUID(id) as id, title, price from Item LIMIT ?")
             .execute(Tuple.of(limit));
     return rowSetUni
         .onItem()
@@ -67,13 +64,12 @@ public class ItemResource {
     UUID uuid = UUID.randomUUID();
     newItem.setId(uuid.toString());
     return mySQLPool
-        .preparedQuery(
-            "Insert into Item (id, title, description, price) values (UUID_TO_BIN(?), ?, ?, ?)")
-        .execute(Tuple.of(uuid, newItem.getTitle(), newItem.getDescription(), newItem.getPrice()))
+        .preparedQuery("Insert into Item (id, title, price) values (UUID_TO_BIN(?), ?, ?, ?)")
+        .execute(Tuple.of(uuid, newItem.getTitle(), newItem.getPrice()))
         // add new Item to search index as a side effect
         .onItem()
-        .invoke(() -> searchService.addToIndex(newItem).subscribe().asCompletionStage())
-        .onFailure()
+        // .invoke(() -> searchService.addToIndex(newItem).subscribe().asCompletionStage())
+        // .onFailure()
         .invoke((f) -> log.error("Error while saving to db", f))
         .onItem()
         .transform(rows -> Response.created(URI.create("/items/" + uuid)))
@@ -81,18 +77,17 @@ public class ItemResource {
         .transform(Response.ResponseBuilder::build);
   }
 
-  @PUT
+  /*@PUT
   @Path("add")
   public CompletionStage<Void> addSearch(Item item) {
-    return searchService.addToIndex(item).subscribe().asCompletionStage();
-  }
+   return searchService.addToIndex(item).subscribe().asCompletionStage();
+  }*/
 
   private Item toItem(Row row) {
-    Item item = new Item();
+    Item item = Item.builder().build();
     item.setId(row.getString("id"));
     item.setTitle(row.getString("title"));
-    item.setPrice(row.getNumeric("price").toString());
-    item.setDescription(row.getString("description"));
+    item.setPrice(row.getNumeric("price").doubleValue());
     return item;
   }
 
@@ -101,7 +96,7 @@ public class ItemResource {
         mySQLPool
             .preparedQuery(
                 "Select BIN_TO_UUID(id) as id, "
-                    + "title, description, price from Item where id = UUID_TO_BIN(?)")
+                    + "title, price from Item where id = UUID_TO_BIN(?)")
             .execute(Tuple.of(id));
     return rowSetUni
         .onItem()

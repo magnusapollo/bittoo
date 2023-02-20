@@ -68,13 +68,15 @@ public class CartResource {
   public Uni<Cart> getCartForUser(@RestHeader("account_id") String accountId) {
     if (accountId == null || "".equals(accountId)) return Uni.createFrom().nullItem();
     // get userId from context
-    return CartEntity.<CartEntity>find("account_id", accountId).firstResult().map(this::toResource);
+    return CartEntity.<CartEntity>find("account_id", UUID.fromString(accountId))
+        .firstResult()
+        .map(this::toResource);
   }
 
   @POST
   public Uni<String> create(@RestHeader("account_id") String accountId) {
     CartEntity cartEntity = toEntity(null, new Cart());
-    cartEntity.setAccountId(accountId);
+    cartEntity.setAccountId(UUID.fromString(accountId));
     return Panache.<CartEntity>withTransaction(cartEntity::persist)
         .map(inserted -> inserted.getId().toString());
   }
@@ -220,7 +222,6 @@ public class CartResource {
       resource.setTotalPrice(BigDecimal.valueOf(totalPrice));
     }
     resource.setId(entity.getId().toString());
-
     return resource;
   }
 
@@ -231,7 +232,6 @@ public class CartResource {
     if (itemEntity.getId() != null) {
       itemResource.setId(itemEntity.getId().toString());
     }
-    itemResource.setProductId(itemEntity.getProductId());
     itemResource.setQuantity(itemEntity.getQuantity());
     return itemResource;
   }
@@ -278,6 +278,7 @@ public class CartResource {
     Multi<CartItem> cartItemMulti =
         cart.map(Cart::getCartItems)
             .onItem()
+            .ifNotNull()
             .transformToMulti(list -> Multi.createFrom().iterable(list));
     Multi<Integer> quantityStream = cartItemMulti.map(CartItem::getQuantity);
     Multi<Item> itemMulti =
@@ -307,7 +308,6 @@ public class CartResource {
     if (itemResource.getItemId() != null) {
       itemEntity.setItemId(UUID.fromString(itemResource.getItemId()));
     }
-    itemEntity.setProductId(itemResource.getProductId());
     itemEntity.setQuantity(itemResource.getQuantity());
     return itemEntity;
   }

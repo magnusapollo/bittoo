@@ -1,8 +1,7 @@
 package com.bittoo.search.service;
 
-import com.bittoo.item.model.Item;
+import com.bittoo.item.model.Product;
 import com.bittoo.search.client.ElasticSearchClient;
-import com.bittoo.search.client.model.Hit;
 import com.bittoo.search.client.model.SearchResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.smallrye.common.annotation.Blocking;
@@ -19,36 +18,39 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class SearchServiceImpl implements SearchService {
 
-    @RestClient
-    ElasticSearchClient client;
+  @RestClient ElasticSearchClient client;
 
-    @Inject
-    ObjectMapper objectMapper;
+  @Inject ObjectMapper objectMapper;
 
-    @Override
-    @Blocking
-    public List<Item> search(String query) {
-        return client.search(query)
-                .onItem().transform(SearchResult::getHits)
-                .onItem().transformToMulti((hits) -> Multi.createFrom().iterable(hits))
-                .onItem().transform(Hit::getSource)
-                .onItem().transform(this::buildItemFromSource)
-                .subscribe().asStream().collect(Collectors.toList());
-    }
+  @Override
+  @Blocking
+  public List<Product> search(String query) {
+    return client
+        .search(query)
+        .onItem()
+        .transform(SearchResult::getHits)
+        .onItem()
+        .transformToMulti((hits) -> Multi.createFrom().iterable(hits))
+        .onItem()
+        .transform(this::buildItemFromSource)
+        .subscribe()
+        .asStream()
+        .collect(Collectors.toList());
+  }
 
-    @Override
-    public Uni<Void> addToIndex(Item item) {
-        Map<String, Object> map = objectMapper.convertValue(item, Map.class);
-        return client.add(item.getId(), map);
-    }
+  @Override
+  public Uni<Void> addToIndex(Product product) {
+    Map<String, Object> map = objectMapper.convertValue(product, Map.class);
+    return client.add(product.getId(), map);
+  }
 
-    private Item buildItemFromSource(Object object) {
-        final Map<String, Object> sourceMap = (Map<String, Object>) object;
-        final Item item = new Item();
-        item.setDescription(sourceMap.getOrDefault("description", "null").toString());
-        item.setTitle(sourceMap.getOrDefault("title", "null").toString());
-        item.setId(sourceMap.getOrDefault("id", "null").toString());
-        item.setPrice(sourceMap.getOrDefault("price", "-1").toString());
-        return item;
-    }
+  private Product buildItemFromSource(Object object) {
+    final Map<String, Object> sourceMap =
+        (Map<String, Object>) ((Map<String, Object>) object).get("_source");
+    final Product.ProductBuilder prod = Product.builder();
+    prod.title(sourceMap.getOrDefault("title", "null").toString());
+    prod.id(sourceMap.getOrDefault("id", "null").toString());
+    // prod.setPrice(sourceMap.getOrDefault("price", "-1").toString());
+    return prod.build();
+  }
 }

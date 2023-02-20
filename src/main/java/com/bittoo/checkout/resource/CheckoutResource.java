@@ -4,11 +4,11 @@ import com.bittoo.cart.model.Cart;
 import com.bittoo.cart.model.CartItem;
 import com.bittoo.checkout.client.CartClient;
 import com.bittoo.checkout.client.ItemClient;
-import com.bittoo.checkout.db.entity.AddressEntity;
+import com.bittoo.checkout.db.entity.CheckoutAddressEntity;
 import com.bittoo.checkout.db.entity.CheckoutEntity;
-import com.bittoo.checkout.model.Address;
 import com.bittoo.checkout.model.Checkout;
 import com.bittoo.checkout.model.PaymentMethod;
+import com.bittoo.checkout.model.ShippingAddress;
 import com.bittoo.checkout.model.TaxInfo;
 import com.bittoo.item.model.Item;
 import io.quarkus.hibernate.reactive.panache.Panache;
@@ -23,13 +23,12 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Path("/v1/carts/{cartId}/checkout")
 @RequestScoped
@@ -58,7 +57,7 @@ public class CheckoutResource {
   @GET
   @Path("/shipping")
   @Produces(MediaType.APPLICATION_JSON)
-  public Uni<Address> getShipping(String cartId) {
+  public Uni<ShippingAddress> getShipping(String cartId) {
 
     return null;
   }
@@ -66,47 +65,52 @@ public class CheckoutResource {
   @POST
   @Path("/shipping")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Uni<Checkout> updateShipping(String cartId, Address shipping) {
-    shipping.setAddressType(Address.AddressType.SHIPPING);
-    return Panache.withTransaction(
-            () ->
-                CheckoutEntity.<CheckoutEntity>find("cartId", UUID.fromString(cartId))
-                    .firstResult()
-                    .onItem()
-                    .ifNull()
-                    .continueWith(CheckoutEntity::new)
-                    .map(
-                        checkoutEntity -> {
-                          checkoutEntity.setCartId(UUID.fromString(cartId));
-                          checkoutEntity.setShipping(toEntity(null, shipping));
-                          return checkoutEntity;
-                        })
-                    .flatMap(checkoutEntity -> checkoutEntity.<CheckoutEntity>persist()))
-        .map(this::toResource);
+  public Uni<Checkout> updateShipping(String cartId, ShippingAddress shipping) {
+    shipping.setAddressType(ShippingAddress.AddressType.SHIPPING);
+    Uni<Checkout> checkoutUni =
+        Panache.withTransaction(
+                () ->
+                    CheckoutEntity.<CheckoutEntity>find("cartId", UUID.fromString(cartId))
+                        .firstResult()
+                        .onItem()
+                        .ifNull()
+                        .continueWith(CheckoutEntity::new)
+                        .map(
+                            checkoutEntity -> {
+                              checkoutEntity.setCartId(UUID.fromString(cartId));
+                              checkoutEntity.setShipping(toEntity(null, shipping));
+                              return checkoutEntity;
+                            })
+                        .flatMap(checkoutEntity -> checkoutEntity.<CheckoutEntity>persist()))
+            .map(this::toResource);
+    Uni<BigDecimal> shippingFee = calculateShippingFee(shipping);
+
+    return Uni.combine()
+        .all()
+        .unis(checkoutUni, shippingFee)
+        .combinedWith(
+            (c, sp) -> {
+              c.setShippingFee(sp);
+              return c;
+            });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Uni<Checkout> get(String cartId) {
-    // If customer is logged in, get address, calculate shipping fee (?),
-    // get payment info, calculate taxInfo
-    String customerId = getCustomer();
-    Optional<Address> shipping = Optional.empty();
-    if (isLoggedIn()) {
-      shipping =
-          // TODO: get customer address
-          Stream.of(Address.builder().build(), Address.builder().build())
-              .filter(a -> Address.AddressType.SHIPPING.equals(a.getAddressType()))
-              .findFirst();
-      if (shipping.isPresent()) {
-        // calculate shipping fees?
+  public Uni<Checkout> get(String id) {
+    return CheckoutEntity.<CheckoutEntity>findById(UUID.fromString(id)).map(this::toResource);
+  }
 
-      }
-    }
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  public Uni<Checkout> create(@PathParam("cartId") String cartId, ShippingAddress shipping) {
+    // calculate shipping fee (?),
+    // get payment info, calculate taxInfo
+    shipping.setAddressType(ShippingAddress.AddressType.SHIPPING);
+    Uni<Cart> cartUni = cartClient.get(cartId);
 
     Multi<CartItem> cartItemMulti =
-        cartClient
-            .get(cartId)
+        cartUni
             .map(Cart::getCartItems)
             .onItem()
             .transformToMulti(list -> Multi.createFrom().iterable(list));
@@ -132,26 +136,26 @@ public class CheckoutResource {
             .collect()
             .with(Collectors.reducing(BigDecimal.ZERO, BigDecimal::add));
 
-    Uni<BigDecimal> tax = calculateTax();
-
-    Uni<Checkout> checkoutDBUni = getCheckoutDBUni(cartId, shipping.orElse(null));
+    Uni<BigDecimal> tax = calculateTax(itemMulti);
+    Uni<BigDecimal> shippingFee = calculateShippingFee(shipping);
+    Uni<Checkout> checkoutDBUni = getCheckoutDBUni(cartId, shipping);
     return Uni.combine()
         .all()
-        .unis(checkoutDBUni, totalPriceOfItems, tax)
+        .unis(checkoutDBUni, totalPriceOfItems, tax, shippingFee)
         .combinedWith(
-            (c, tp, tx) -> {
+            (c, tp, tx, sf) -> {
               c.setTotalPrice(tp);
               c.setTaxInfo(TaxInfo.builder().estimatedTax(tx).build());
+              c.setShippingFee(sf);
               return c;
             });
   }
 
-  private boolean isLoggedIn() {
-    // TODO:
-    return false;
+  private Uni<BigDecimal> calculateShippingFee(ShippingAddress shippingAddress) {
+    return Uni.createFrom().item(new BigDecimal("10.0"));
   }
 
-  private Uni<Checkout> getCheckoutDBUni(String cartId, Address shipping) {
+  private Uni<Checkout> getCheckoutDBUni(String cartId, ShippingAddress shippingAddress) {
     return Panache.withTransaction(
             () ->
                 CheckoutEntity.<CheckoutEntity>find("cartId", UUID.fromString(cartId))
@@ -162,28 +166,26 @@ public class CheckoutResource {
                     .map(
                         checkoutEntity -> {
                           checkoutEntity.setCartId(UUID.fromString(cartId));
-                          if (shipping != null) {
-                            checkoutEntity.setShipping(
-                                toEntity(checkoutEntity.getShipping(), shipping));
-                          }
+                          checkoutEntity.setShipping(toEntity(null, shippingAddress));
                           return checkoutEntity;
                         })
                     .flatMap(checkoutEntity -> checkoutEntity.<CheckoutEntity>persist()))
         .map(this::toResource);
   }
 
-  private Address toResource(AddressEntity entity) {
+  private ShippingAddress toResource(CheckoutAddressEntity entity) {
     if (entity == null) {
       return null;
     }
-    return Address.builder()
+    return ShippingAddress.builder()
+        .name(entity.getName())
         .line1(entity.getLine1())
         .line2(entity.getLine2())
         .line3(entity.getLine3())
         .city(entity.getCity())
         .state(entity.getState())
         .country(entity.getCountry())
-        .addressType(Address.AddressType.valueOf(entity.getAddressType()))
+        .addressType(ShippingAddress.AddressType.valueOf(entity.getAddressType()))
         .build();
   }
 
@@ -191,26 +193,23 @@ public class CheckoutResource {
     if (entity == null) {
       return null;
     }
-    final Address a = toResource(entity.getShipping());
+    final ShippingAddress a = toResource(entity.getShipping());
     return Checkout.builder()
         .id(entity.getId().toString())
         .shippingAddress(a)
-        .carId(entity.getCartId().toString())
+        .cartId(entity.getCartId().toString())
         .build();
   }
 
-  private String getCustomer() {
-    return "1";
-  }
-
-  private Uni<BigDecimal> calculateTax() {
+  private Uni<BigDecimal> calculateTax(Multi<Item> itemMulti) {
     return Uni.createFrom().item(new BigDecimal("10.0"));
   }
 
-  private AddressEntity toEntity(AddressEntity existing, Address resource) {
+  private CheckoutAddressEntity toEntity(CheckoutAddressEntity existing, ShippingAddress resource) {
     if (existing == null) {
-      existing = new AddressEntity();
+      existing = new CheckoutAddressEntity();
     }
+    existing.setName(resource.getName());
     existing.setLine1(resource.getLine1());
     existing.setLine2(resource.getLine2());
     existing.setLine3(resource.getLine3());

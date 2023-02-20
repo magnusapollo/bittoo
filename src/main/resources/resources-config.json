@@ -1,0 +1,7 @@
+{
+  "resources": [
+    {
+      "pattern": "home_page\\.json$"
+    }
+  ]
+}

@@ -22,24 +22,17 @@ import java.util.UUID;
 @Entity(name = "cart_item")
 @Table(name = "cart_item")
 public class CartItemEntity extends PanacheEntityBase {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @GenericGenerator(name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator")
-    UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  private UUID id;
 
-    @Column(name = "product_id")
-    String productId;
+  @Column(name = "item_id")
+  private UUID itemId;
 
-    @Column(name = "item_id")
-    UUID itemId;
+  @Column private int quantity;
 
-    @Column
-    int quantity;
-
-    @ManyToOne
-    @JoinColumn(name = "cart_id",
-            foreignKey = @ForeignKey(name = "CART_ID_FK")
-    )
-    CartEntity cart;
+  @ManyToOne
+  @JoinColumn(name = "cart_id", foreignKey = @ForeignKey(name = "CART_ID_FK"))
+  private CartEntity cart;
 }

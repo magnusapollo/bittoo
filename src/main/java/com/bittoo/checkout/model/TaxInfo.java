@@ -8,5 +8,5 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class TaxInfo {
-  BigDecimal estimatedTax;
+  private BigDecimal estimatedTax;
 }

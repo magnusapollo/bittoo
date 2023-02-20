@@ -14,6 +14,10 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-resteasy-reactive'
 
+    // keycloak
+    implementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
+    implementation 'io.quarkus:quarkus-oidc-client'
+
     // mysql
     implementation 'io.quarkus:quarkus-reactive-mysql-client'
     implementation 'io.quarkus:quarkus-flyway'

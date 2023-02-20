@@ -1,7 +1,7 @@
 package com.bittoo.checkout.model;
 
 public class PaymentMethod {
-    Address billingAddress;
-    String paymentRequestId;
-    String paymentConfirmationId;
+  private ShippingAddress billingAddress;
+  private String paymentRequestId;
+  private String paymentConfirmationId;
 }

@@ -9,10 +9,10 @@ import java.util.Map;
 @Data
 public class SearchResult {
 
-    List<Hit> hits;
+  List<Map<String, Object>> hits;
 
-    @JsonProperty("hits")
-    private void unpackNameFromNestedObject(Map<String, Object> outerHits) {
-        this.hits = (List<Hit>) outerHits.get("hits");
-    }
+  @JsonProperty("hits")
+  private void unpackNameFromNestedObject(Map<String, Object> outerHits) {
+    this.hits = (List<Map<String, Object>>) outerHits.get("hits");
+  }
 }

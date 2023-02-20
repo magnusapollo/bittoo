@@ -1,0 +1,127 @@
+{
+  "sections": [
+    {
+      "name": "section1",
+      "order": 1,
+      "type": "carousel",
+      "elements": [
+        {
+          "imgsrc": "https://cdn.shopify.com/s/files/1/0511/4685/0467/files/FOFOS_d9476c39-4d0b-4f95-8e28-4f2abdd85ead.jpg?v=1675168415",
+          "text": "image1",
+          "link": "",
+          "type": "deal"
+        },
+        {
+          "imgsrc": "https://thumbs.dreamstime.com/z/full-seamless-spherical-panorama-angle-view-shore-width-river-neman-sunny-summer-day-equirectangular-full-141445022.jpg",
+          "text": "image2",
+          "link": "",
+          "type": "deal"
+        },
+        {
+          "imgsrc": "https://thumbs.dreamstime.com/z/full-moon-clouds-sky-10065591.jpg",
+          "text": "image3",
+          "link": "",
+          "type": "deal"
+        },
+        {
+          "imgsrc": "https://thumbs.dreamstime.com/z/full-moon-clouds-sky-10065591.jpg",
+          "text": "image4",
+          "link": "5",
+          "type": "deal"
+        },
+        {
+          "imgsrc": "https://www.urbanpup.com/images/_newindex/win/143-6index.jpg",
+          "text": "image5",
+          "link": "/deals?dealId=5",
+          "type": "deal"
+        }
+      ]
+    },
+    {
+      "name": "section2",
+      "order": 2,
+      "type": "categories",
+      "elements": [
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "dry food",
+          "link": "1",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "wet food",
+          "link": "2",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "mixed",
+          "link": "3",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "toys",
+          "link": "7",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1589924749359-9697080c3577?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGV0JTIwdG95c3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "accessories",
+          "link": "11",
+          "type": "categoryId"
+        },
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1562782441-fdc53369e894?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fHBldCUyMG1lZGljaW5lc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "pharmacy",
+          "link": "14",
+          "type": "categoryId"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "celebration",
+          "link": "16",
+          "type": "categoryId"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "giftcards",
+          "link": "15",
+          "type": "categoryId"
+        }
+      ]
+    },
+    {
+      "name": "section3",
+      "order": 3,
+      "type": "petType",
+      "elements": [
+        {
+          "imgsrc": "https://thumbs.dreamstime.com/z/full-moon-clouds-sky-10065591.jpg",
+          "text": "dog",
+          "link": "1",
+          "type": "products"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "cat",
+          "link": "2",
+          "type": "products"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "birds",
+          "link": "3",
+          "type": "products"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "animals",
+          "link": "4",
+          "type": "products"
+        }
+      ]
+    }
+  ]
+}

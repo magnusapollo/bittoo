@@ -7,7 +7,8 @@ import java.util.List;
 
 @Data
 public class Cart {
-  String id;
-  BigDecimal totalPrice;
-  List<CartItem> cartItems;
+  private String id;
+  private BigDecimal totalPrice;
+  private List<CartItem> cartItems;
+  private String customerId;
 }

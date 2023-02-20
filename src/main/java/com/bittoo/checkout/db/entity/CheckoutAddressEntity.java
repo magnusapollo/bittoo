@@ -10,29 +10,32 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode(callSuper = true)
 @Embeddable
 @Data
-public class AddressEntity extends PanacheEntityBase {
+public class CheckoutAddressEntity extends PanacheEntityBase {
+
+  @Column(name = "name")
+  private String name;
 
   @Column(name = "line_1")
-  String line1;
+  private String line1;
 
   @Column(name = "line_2")
-  String line2;
+  private String line2;
 
   @Column(name = "line_3")
-  String line3;
+  private String line3;
 
   @Column(name = "city")
-  String city;
+  private String city;
 
   @Column(name = "state")
-  String state;
+  private String state;
 
   @Column(name = "zip_code")
-  String zipcode;
+  private String zipcode;
 
   @Column(name = "country")
-  String country;
+  private String country;
 
   @Column(name = "addr_type")
-  String addressType;
+  private String addressType;
 }

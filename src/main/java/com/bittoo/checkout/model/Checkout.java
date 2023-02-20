@@ -8,22 +8,22 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class Checkout {
-  String id;
+  private String id;
   /**
-   * cartId to make GET idempotent If you update items in cart, GET on checkout should still give
-   * you same result;
+   * cartId instead of items to make GET idempotent If you update items in cart, GET on checkout
+   * should still give you same result;
    *
    * <p>Disadvantage: Client will have to make another call to get info for items in cart
    */
-  String carId;
+  private String cartId;
   // shipping address;
-  Address shippingAddress;
+  private ShippingAddress shippingAddress;
   // billing info;
-  PaymentMethod paymentMethod;
+  private PaymentMethod paymentMethod;
   // tax info
-  TaxInfo taxInfo;
+  private TaxInfo taxInfo;
   // shipping fee
-  BigDecimal shippingFee;
+  private BigDecimal shippingFee;
 
   BigDecimal totalPrice;
 }

@@ -1,4 +1,7 @@
 quarkus:
+  http:
+    host: 0.0.0.0
+    cors: true
   rest-client:
     search-api:
       url: http://localhost:9200
@@ -12,11 +15,21 @@ quarkus:
     payment:
       url: http://localhost:8080
       scope: javax.inject.Singleton
+  keycloak:
+    admin-client:
+      enabled: true
+      server-url: http://localhost:8081
+      realm: master
+      client-id: admin-cli
+      client-secret: 'SWVQMk5T0DALTsTpTYHIfKAz8vt40YmM'
+      username: admin
+      password: admin
+      grant-type: PASSWORD
   datasource:
     jdbc: false
     db-kind: mysql
     username: prarabdh
-    password: newpass
+    password: prarabdh
     reactive:
       url: mysql://localhost:3306/bittoo_items
       max-size: 20
@@ -24,7 +37,7 @@ quarkus:
       jdbc: false
       db-kind: mysql
       username: prarabdh
-      password: newpass
+      password: prarabdh
       reactive:
         url: mysql://localhost:3306/bittoo_items
         max-size: 20
@@ -32,7 +45,7 @@ quarkus:
       jdbc: false
       db-kind: mysql
       username: prarabdh
-      password: newpass
+      password: prarabdh
       reactive:
         url: mysql://localhost:3306/bittoo_items
         max-size: 20
