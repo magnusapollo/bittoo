@@ -3,6 +3,7 @@ package com.bittoo.item.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -19,7 +20,7 @@ public class Product {
 
   private String otherInfo;
 
-  private String brand;
+  private Brand brand;
 
   private int petType;
 
@@ -28,5 +29,5 @@ public class Product {
   private Set<Category> categories;
 
   // computed - price (lowest price among items)
-  private String price;
+  private List<Price> prices;
 }

@@ -32,7 +32,7 @@ public class SearchServiceImpl implements SearchService {
         .onItem()
         .transformToMulti((hits) -> Multi.createFrom().iterable(hits))
         .onItem()
-        .transform(this::buildItemFromSource)
+        .transform(this::buildProductFromSource)
         .subscribe()
         .asStream()
         .collect(Collectors.toList());
@@ -44,13 +44,14 @@ public class SearchServiceImpl implements SearchService {
     return client.add(product.getId(), map);
   }
 
-  private Product buildItemFromSource(Object object) {
+  private Product buildProductFromSource(Object object) {
     final Map<String, Object> sourceMap =
         (Map<String, Object>) ((Map<String, Object>) object).get("_source");
     final Product.ProductBuilder prod = Product.builder();
+    final Product p = objectMapper.convertValue(sourceMap, Product.class);
     prod.title(sourceMap.getOrDefault("title", "null").toString());
     prod.id(sourceMap.getOrDefault("id", "null").toString());
     // prod.setPrice(sourceMap.getOrDefault("price", "-1").toString());
-    return prod.build();
+    return p;
   }
 }

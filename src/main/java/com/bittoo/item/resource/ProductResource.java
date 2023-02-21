@@ -5,8 +5,10 @@ import com.bittoo.item.db.entity.CategoryEntity;
 import com.bittoo.item.db.entity.ItemEntity;
 import com.bittoo.item.db.entity.PetTypeEntity;
 import com.bittoo.item.db.entity.ProductEntity;
+import com.bittoo.item.model.Brand;
 import com.bittoo.item.model.Category;
 import com.bittoo.item.model.Item;
+import com.bittoo.item.model.Price;
 import com.bittoo.item.model.Product;
 import com.bittoo.search.service.SearchService;
 import io.quarkus.hibernate.reactive.panache.Panache;
@@ -77,11 +79,8 @@ public class ProductResource {
   public Uni<String> create(Product newProduct) {
     ProductEntity productEntity = toEntity(newProduct);
     return Panache.<ProductEntity>withTransaction(productEntity::persist)
-        .onItem()
-        .invoke(
-            () ->
-                searchService.addToIndex(toResource(productEntity)).subscribe().asCompletionStage())
-        .map(inserted -> inserted.getId().toString());
+        .map(inserted -> inserted.getId().toString())
+        .invoke(() -> searchService.addToIndex(newProduct));
   }
 
   @GET
@@ -121,7 +120,8 @@ public class ProductResource {
               return productEntity;
             })
         .flatMap(ProductEntity::<ProductEntity>persistAndFlush)
-        .map(this::toResource);
+        .map(this::toResource)
+        .invoke(searchService::addToIndex);
   }
 
   private String buildQuery(
@@ -204,7 +204,7 @@ public class ProductResource {
     entity.setShortDescription(newProduct.getShortDescription());
     entity.setOtherInfo(newProduct.getOtherInfo());
     var brandEntity = new BrandEntity();
-    brandEntity.setId(UUID.fromString(newProduct.getBrand()));
+    brandEntity.setId(UUID.fromString(newProduct.getBrand().getId()));
     entity.setBrand(brandEntity);
     var petTypeEntity = new PetTypeEntity();
     petTypeEntity.setId(newProduct.getPetType());
@@ -252,16 +252,35 @@ public class ProductResource {
         .shortDescription(entity.getShortDescription())
         .longDescription(entity.getLongDescription())
         .petType(entity.getPetType().getId())
-        .brand(entity.getBrand().getName())
+        .brand(
+            Brand.builder()
+                .name(entity.getBrand().getName())
+                .id(entity.getBrand().getId().toString())
+                .build())
         .items(entity.getItems().stream().map(this::toResource).collect(Collectors.toSet()))
         .otherInfo(entity.getOtherInfo())
-        .price(
-            String.valueOf(
-                entity.getItems().stream()
-                    .map(this::toResource)
-                    .mapToDouble(Item::getPrice)
-                    .min()
-                    .orElse(0.00)))
+        .prices(
+            List.of(
+                Price.builder()
+                    .priceType(Price.PriceType.offerPrice)
+                    .price(
+                        String.valueOf(
+                            entity.getItems().stream()
+                                .map(this::toResource)
+                                .mapToDouble(Item::getPrice)
+                                .min()
+                                .orElse(0.00)))
+                    .build(),
+                Price.builder()
+                    .priceType(Price.PriceType.listPrice)
+                    .price(
+                        String.valueOf(
+                            entity.getItems().stream()
+                                .map(this::toResource)
+                                .mapToDouble(Item::getPrice)
+                                .max()
+                                .orElse(0.00)))
+                    .build()))
         .categories(
             entity.getCategories() != null && !entity.getCategories().isEmpty()
                 ? entity.getCategories().stream().map(this::toResource).collect(Collectors.toSet())
