@@ -2,6 +2,7 @@
   "sections": [
     {
       "name": "section1",
+      "title": "",
       "order": 1,
       "type": "carousel",
       "elements": [
@@ -40,6 +41,7 @@
     {
       "name": "section2",
       "order": 2,
+      "title": "Popular Categories",
       "type": "categories",
       "elements": [
         {
@@ -49,7 +51,7 @@
           "type": "category"
         },
         {
-          "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "imgsrc": "https://www.k9ofmine.com/wp-content/uploads/2020/01/best-canned-dog-food-850x520.jpg",
           "text": "wet food",
           "link": "2",
           "type": "category"
@@ -64,6 +66,18 @@
           "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
           "text": "toys",
           "link": "7",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "toys",
+          "link": "5",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://images.unsplash.com/photo-1571873735645-1ae72b963024?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8cGV0JTIwZm9vZHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60",
+          "text": "toys",
+          "link": "6",
           "type": "category"
         },
         {
@@ -94,8 +108,47 @@
     },
     {
       "name": "section3",
+      "title": "Shop By Pet Type",
       "order": 3,
       "type": "petType",
+      "elements": [
+        {
+          "imgsrc": "https://thumbs.dreamstime.com/z/full-moon-clouds-sky-10065591.jpg",
+          "text": "dog",
+          "link": "1",
+          "type": "products"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "cat",
+          "link": "2",
+          "type": "products"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIgF-rwh7WL-ZdPTwxObn7cK-k1tbKg1SSOQ&usqp=CAU",
+          "text": "fish",
+          "link": "3",
+          "type": "products"
+        },
+        {
+          "imgsrc": "https://www.thehappychickencoop.com/wp-content/uploads/2022/07/Most-Popular-Pet-Birds.jpg",
+          "text": "bird",
+          "link": "4",
+          "type": "products"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlYsNUr1fubpVF8TXs72fcvkcjscDCCcR1CA&usqp=CAU",
+          "text": "small pet",
+          "link": "5",
+          "type": "products"
+        }
+      ]
+    },
+    {
+      "name": "section4",
+      "title": "Bittoo Specials",
+      "order": 4,
+      "type": "deals",
       "elements": [
         {
           "imgsrc": "https://thumbs.dreamstime.com/z/full-moon-clouds-sky-10065591.jpg",
@@ -120,6 +173,101 @@
           "text": "animals",
           "link": "4",
           "type": "products"
+        }
+      ]
+    },
+    {
+      "name": "section5",
+      "order": 6,
+      "type": "popularBrands",
+      "elements": [
+        {
+          "imgsrc": "https://thumbs.dreamstime.com/z/full-moon-clouds-sky-10065591.jpg",
+          "text": "dog",
+          "link": "1",
+          "type": "brand"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "cat",
+          "link": "2",
+          "type": "brand"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "birds",
+          "link": "3",
+          "type": "brand"
+        },
+        {
+          "imgsrc": "https://media.istockphoto.com/id/1174668487/photo/dog-with-birthday-cake.jpg?s=612x612&w=0&k=20&c=e8O0N0tsQrTMuO2UIsPacm306dGpecCW4AHRP7RFX2k=",
+          "text": "animals",
+          "link": "4",
+          "type": "brand"
+        }
+      ]
+    },
+    {
+      "name": "section6",
+      "title": "brands",
+      "order": 3.5,
+      "type": "brandCards",
+      "elements": [
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDO41G7VoWSXy4PkqOicEDOxJ6caiRuvCpuw&usqp=CAU",
+          "text": "Wow your pet with these pawsome treats",
+          "link": "1",
+          "type": "brand"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3gSiBaD53OGXeerXKCsk7QxJ8JN8hAZI0fn1btpUtqtniBXEBZ4vLlY62QLZjzZvthRM&usqp=CAU",
+          "text": "Treat your furry friend Royal-ly",
+          "link": "2",
+          "type": "brand"
+        }
+      ]
+    },
+    {
+      "name": "section6",
+      "title": "Explore More",
+      "order": 7,
+      "type": "petType",
+      "elements": [
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDO41G7VoWSXy4PkqOicEDOxJ6caiRuvCpuw&usqp=CAU",
+          "text": "Wow your pet with these pawsome treats",
+          "link": "1",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDO41G7VoWSXy4PkqOicEDOxJ6caiRuvCpuw&usqp=CAU",
+          "text": "Wow your pet with these pawsome treats",
+          "link": "1",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDO41G7VoWSXy4PkqOicEDOxJ6caiRuvCpuw&usqp=CAU",
+          "text": "Wow your pet with these pawsome treats",
+          "link": "1",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDO41G7VoWSXy4PkqOicEDOxJ6caiRuvCpuw&usqp=CAU",
+          "text": "Wow your pet with these pawsome treats",
+          "link": "1",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDO41G7VoWSXy4PkqOicEDOxJ6caiRuvCpuw&usqp=CAU",
+          "text": "Wow your pet with these pawsome treats",
+          "link": "1",
+          "type": "category"
+        },
+        {
+          "imgsrc": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3gSiBaD53OGXeerXKCsk7QxJ8JN8hAZI0fn1btpUtqtniBXEBZ4vLlY62QLZjzZvthRM&usqp=CAU",
+          "text": "Treat your furry friend Royal-ly",
+          "link": "2",
+          "type": "category"
         }
       ]
     }

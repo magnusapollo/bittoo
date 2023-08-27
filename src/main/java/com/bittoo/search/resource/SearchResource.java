@@ -20,4 +20,10 @@ public class SearchResource {
   public List<Product> search(@QueryParam("q") String query) {
     return service.search(query);
   }
+
+  @GET
+  @Path("/cat")
+  public List<Product> searchByCat(@QueryParam("q") String query) {
+    return service.search(query);
+  }
 }

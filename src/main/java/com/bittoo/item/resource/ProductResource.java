@@ -12,6 +12,7 @@ import com.bittoo.item.model.Price;
 import com.bittoo.item.model.Product;
 import com.bittoo.search.service.SearchService;
 import io.quarkus.hibernate.reactive.panache.Panache;
+import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import lombok.NonNull;
@@ -44,19 +45,17 @@ public class ProductResource {
 
   public static final String BASE_PRODUCT_QUERY =
       "Select distinct p from product p "
-          + "left join fetch p.items "
+          + "left join fetch p.items item "
           + "left join fetch p.categories c "
-          + "left join fetch c.children ";
-  private static final String PRODUCTS_BY_CAT_ID_QUERY = BASE_PRODUCT_QUERY + "where c.id = ?1";
+          + "left join fetch c.children ch";
   private static final String PRODUCTS_BY_QUERY =
       BASE_PRODUCT_QUERY + "left join fetch p.petType pet left join fetch p.brand brand where ";
   private static final String PET_CLAUSE = "pet.id = ?";
   private static final String AND = " and ";
   private static final String CATEGORY_CLAUSE = "c.id = ?";
+  private static final String PRICE_MIN_CLAUSE = "item.price >= ?";
+  private static final String PRICE_MAX_CLAUSE = "item.price <= ?";
   private static final String BRAND_CLAUSE = "brand.id = ?";
-  private static final String PRODUCTS_BY_PET_ID_QUERY =
-      BASE_PRODUCT_QUERY + "left join fetch p.petType pet where pet.id = ?1";
-
   private static final String PRODUCT_BY_ID_QUERY = BASE_PRODUCT_QUERY + "where p.id =?1 ";
 
   @Inject private final SearchService searchService;
@@ -95,8 +94,10 @@ public class ProductResource {
   public Multi<Product> getBy(
       @QueryParam("categoryId") Long categoryId,
       @QueryParam("petTypeId") Long petTypeId,
-      @QueryParam("brandId") String brandId) {
-    return getProductsFilter(petTypeId, categoryId, brandId);
+      @QueryParam("brandId") String brandId,
+      @QueryParam("priceMin") Double priceMin,
+      @QueryParam("priceMax") Double priceMax) {
+    return getProductsFilter(petTypeId, categoryId, brandId, priceMin, priceMax);
   }
 
   @GET
@@ -125,22 +126,21 @@ public class ProductResource {
   }
 
   private String buildQuery(
-      boolean isPetTypePresent, boolean isCategoryPresent, boolean isBrandPresent) {
+      boolean isPetTypePresent,
+      boolean isCategoryPresent,
+      boolean isBrandPresent,
+      boolean isPriceMin,
+      boolean isPriceMax) {
     StringBuilder b = new StringBuilder(PRODUCTS_BY_QUERY);
     if (!(isPetTypePresent || isBrandPresent || isCategoryPresent)) {
       throw new RuntimeException(
           "Atleast one of petType, brand or category should be present in the filter query");
     }
+
+    // This has to be in same order as buildQueryParams
     int i = 0;
     if (isPetTypePresent) {
       b.append(PET_CLAUSE.trim());
-      b.append(++i);
-    }
-    if (isBrandPresent) {
-      if (i > 0) {
-        b.append(AND);
-      }
-      b.append(BRAND_CLAUSE.trim());
       b.append(++i);
     }
     if (isCategoryPresent) {
@@ -150,10 +150,29 @@ public class ProductResource {
       b.append(CATEGORY_CLAUSE.trim());
       b.append(++i);
     }
+    if (isBrandPresent) {
+      if (i > 0) {
+        b.append(AND);
+      }
+      b.append(BRAND_CLAUSE.trim());
+      b.append(++i);
+    }
+
+    if (isPriceMin) {
+      b.append(AND);
+      b.append(PRICE_MIN_CLAUSE.trim());
+      b.append(++i);
+    }
+    if (isPriceMax) {
+      b.append(AND);
+      b.append(PRICE_MAX_CLAUSE.trim());
+      b.append(++i);
+    }
     return b.toString();
   }
 
-  private Object[] buildQueryParams(Long petTypeId, Long categoryId, String brandId) {
+  private Object[] buildQueryParams(
+      Long petTypeId, Long categoryId, String brandId, Double priceMin, Double priceMax) {
     List<Object> objectList = new ArrayList<>();
     if (petTypeId != null) {
       objectList.add(petTypeId.intValue());
@@ -163,6 +182,12 @@ public class ProductResource {
     }
     if (brandId != null) {
       objectList.add(UUID.fromString(brandId));
+    }
+    if (priceMin != null) {
+      objectList.add(priceMin);
+    }
+    if (priceMax != null) {
+      objectList.add(priceMax);
     }
     return objectList.toArray();
   }
@@ -175,12 +200,19 @@ public class ProductResource {
         .transform(this::toResource);
   }
 
-  private Multi<Product> getProductsFilter(Long petTypeId, Long categoryId, String brandId) {
-    return ProductEntity.<ProductEntity>find(
-            buildQuery(petTypeId != null, categoryId != null, brandId != null),
-            buildQueryParams(petTypeId, categoryId, brandId))
-        .stream()
-        .map(this::toResource);
+  private Multi<Product> getProductsFilter(
+      Long petTypeId, Long categoryId, String brandId, Double priceMin, Double priceMax) {
+    String query =
+        buildQuery(
+            petTypeId != null,
+            categoryId != null,
+            brandId != null,
+            priceMin != null,
+            priceMax != null);
+    PanacheQuery<ProductEntity> productEntityPanacheQuery =
+        ProductEntity.<ProductEntity>find(
+            query, buildQueryParams(petTypeId, categoryId, brandId, priceMin, priceMax));
+    return productEntityPanacheQuery.stream().map(this::toResource);
   }
 
   private Uni<Long> getProductsByCategoryCount(Long categoryId) {
@@ -298,6 +330,6 @@ public class ProductResource {
   }
 
   private Category toResource(CategoryEntity entity) {
-    return Category.builder().name(entity.getTitle()).id(entity.getId()).build();
+    return Category.builder().title(entity.getTitle()).id(entity.getId()).build();
   }
 }
